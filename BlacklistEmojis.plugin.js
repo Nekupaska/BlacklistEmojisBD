@@ -2,7 +2,7 @@
  * @name BlacklistEmojis
  * @author Nekupaska
  * @description Hides stupid emotes. Ctrl+Shift+X+LeftClick on the emote you want to hide. To unhide, good luck lmao (open the console with Ctrl+Shift+I, select the emote you want to delist and look for data-id's value. Then open C:\Users\*yourname*\AppData\Roaming\BetterDiscord\plugins\BlacklistEmojis.config.json and  look for that ID and remove the line).
- * @version 0.0.1
+ * @version 0.0.2
  * @authorLink https://twitter.com/nekubaba
  */
 
@@ -27,10 +27,11 @@ window.onmouseup= function(e){
 }
 
 
-var blacklistedEmotes = global.BdApi.loadData("BlacklistEmojis", "disabledEmojis") ?? null;
+var blacklistedEmotes = global.BdApi.loadData("BlacklistEmojis", "disabledEmojis") ?? null; //load list of emote ids
 
+///Upon HTML changing, checks for all emojis, adds onClickEvents for hiding, and hides them accordingly, if any are supposed to be hidden
 function hideEmotes(changes) {
-    let emotes = document.querySelectorAll("img[data-type='emoji']"); ///use changes from observer(changes) instead, search there
+    let emotes = document.querySelectorAll("img[data-type='emoji']"); //use changes from observer(changes) instead, search there
     if (emotes != null && emotes.length > 0) {
         let emote = null;
         for (let i = 0; i < emotes.length; i++) {
@@ -41,12 +42,10 @@ function hideEmotes(changes) {
 				emotes[i].setAttribute('listener', 'true');
 			}
 			
+			//hide emote if in json list of ids
             emote = emotes[i].getAttribute("data-id");
             if (emote != undefined && blacklistedEmotes.includes(emote)) {
-				if(emotes[i].getAttribute("alt")==null){
-					emotes[i].setAttribute("alt",emotes[i].getAttribute("aria-label"));
-				}
-				emotes[i].style.opacity=0; 
+				emotes[i].style.opacity=0; //hide emote
 
             }
         }
@@ -54,22 +53,19 @@ function hideEmotes(changes) {
 
 }
 
-
+///If combination of keys pressed at the moment of execution
 function clickEmoteToBlacklist(em) {
-		console.log(em);
     if (pressedKeys["16"] && pressedKeys["17"] && pressedKeys["88"]) {
+		//if emoji
         if (em.getAttribute("data-type") == "emoji") {
-            blacklistEmote(em.getAttribute("data-id"));
-			if(em.getAttribute("alt")==null){
-				em.setAttribute("alt",em.getAttribute("aria-label"));
-			}
-			em.style.opacity=0; 
+            blacklistEmote(em.getAttribute("data-id")); //blacklist emote
+			em.style.opacity=0; //hide emote
 			
         }
     }
 }
 
-//Add to blacklist if not already there
+///Add to blacklist if not already there
 function blacklistEmote(id) {
     let newId = id;
     if (!blacklistedEmotes.includes(newId)) {
@@ -78,6 +74,7 @@ function blacklistEmote(id) {
     }
 }
 
+///BdApi module setup
 module.exports = class blacklistEmojis {
     hideEmotess(changes) {
         hideEmotes(changes);
@@ -87,6 +84,6 @@ module.exports = class blacklistEmojis {
     start() {}
     stop() {}
     observer(changes) {
-        this.hideEmotess(changes);
+        this.hideEmotess(changes); //on HTML change
     }
 }
