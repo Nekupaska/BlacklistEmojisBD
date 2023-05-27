@@ -99,6 +99,7 @@ function blacklistEmote(id, em) {
         blacklistedEmotes.push(newId);
         global.BdApi.saveData("BlacklistEmojis", "disabledEmojis", blacklistedEmotes);
         hideElement(em);
+        global.BdApi.showToast("Emote hidden");
     }
 }
 
@@ -113,6 +114,7 @@ function removeEmoteFromblacklist(id, em) {
 
         global.BdApi.saveData("BlacklistEmojis", "disabledEmojis", editedList);
         showElement(em);
+        global.BdApi.showToast("Emote unhidden");
     }
 }
 
