@@ -32,8 +32,9 @@ window.onmouseup = function(e) {
 var blacklistedEmotes = global.BdApi.loadData("BlacklistEmojis", "disabledEmojis") ?? null; //load list of emote ids
 
 ///Upon HTML changing, checks for all emojis, adds onClickEvents for hiding, and hides them accordingly, if any are supposed to be hidden. If not, shows emotes previously blacklisted in this session
+//25-02-2024: sticker support
 function processEmotes(changes) {
-    let emotes = document.querySelectorAll("img[data-type='emoji']"); //use changes from observer(changes) instead, search there
+    let emotes = document.querySelectorAll("img[data-type='emoji'],img[data-type='sticker']"); //use changes from observer(changes) instead, search there
     if (emotes != null && emotes.length > 0) {
         let emote = null;
         for (let i = 0; i < emotes.length; i++) {
@@ -74,7 +75,7 @@ function processEmotes(changes) {
 function clickEmoteToBlacklist(em) {
     if (pressedKeys["16"] && pressedKeys["17"] && pressedKeys["88"]) {
         //if emoji
-        if (em.getAttribute("data-type") == "emoji") {
+        if (isCorrectElementType(em.getAttribute("data-type"))) {
             blacklistEmote(em.getAttribute("data-id"), em); //blacklist emote
 
         }
@@ -85,11 +86,15 @@ function clickEmoteToBlacklist(em) {
 function clickEmoteToRemoveFromBlacklist(em) {
     if (pressedKeys["16"] && pressedKeys["17"] && pressedKeys["90"]) {
         //if emoji
-        if (em.getAttribute("data-type") == "emoji") {
+        if (isCorrectElementType(em.getAttribute("data-type"))) {
             removeEmoteFromblacklist(em.getAttribute("data-id"), em); //unlist emote
 
         }
     }
+}
+
+function isCorrectElementType(value){
+	return ["emoji","sticker"].includes(value);
 }
 
 ///Add to blacklist if not already there
@@ -99,7 +104,7 @@ function blacklistEmote(id, em) {
         blacklistedEmotes.push(newId);
         global.BdApi.saveData("BlacklistEmojis", "disabledEmojis", blacklistedEmotes);
         hideElement(em);
-        global.BdApi.showToast("Emote hidden");
+        global.BdApi.showToast("Emote/Sticker hidden");
     }
 }
 
@@ -114,7 +119,7 @@ function removeEmoteFromblacklist(id, em) {
 
         global.BdApi.saveData("BlacklistEmojis", "disabledEmojis", editedList);
         showElement(em);
-        global.BdApi.showToast("Emote unhidden");
+        global.BdApi.showToast("Emote/Sticker unhidden");
     }
 }
 
