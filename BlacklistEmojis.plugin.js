@@ -34,7 +34,7 @@ var blacklistedEmotes = global.BdApi.loadData("BlacklistEmojis", "disabledEmojis
 ///Upon HTML changing, checks for all emojis, adds onClickEvents for hiding, and hides them accordingly, if any are supposed to be hidden. If not, shows emotes previously blacklisted in this session
 //25-02-2024: sticker support
 function processEmotes(changes) {
-    let emotes = document.querySelectorAll("img[data-type='emoji'],img[data-type='sticker']"); //use changes from observer(changes) instead, search there
+    let emotes = document.querySelectorAll("img[data-type='emoji'],img[data-type='sticker'],button[data-type='emoji'],button[data-type='sticker']"); //use changes from observer(changes) instead, search there
     if (emotes != null && emotes.length > 0) {
         let emote = null;
         for (let i = 0; i < emotes.length; i++) {
