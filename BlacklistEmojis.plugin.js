@@ -6,7 +6,7 @@
  Ctrl+Shift+Z+LeftClick to unhide. 
  For reactions, hovering over them while having the proper shortcut pressed will do the same. Idk why tho.
  To unhide manually, good luck lmao (open the console with Ctrl+Shift+I, select the emote you want to delist and look for data-id's value. Then open C:\Users\*yourname*\AppData\Roaming\BetterDiscord\plugins\BlacklistEmojis.config.json and  look for that ID and remove the line).
- * @version 0.0.3
+ * @version 0.0.4
  * @authorLink https://twitter.com/nekubaba
  */
 var pressedKeys = {};
@@ -29,7 +29,7 @@ window.onmouseup = function(e) {
     //console.log("up");
 }
 
-var blacklistedEmotes = global.BdApi.loadData("BlacklistEmojis", "disabledEmojis") ?? null; //load list of emote ids
+var blacklistedEmotes = BdApi.Data.load("BlacklistEmojis", "disabledEmojis") ?? null; //load list of emote ids
 
 ///Upon HTML changing, checks for all emojis, adds onClickEvents for hiding, and hides them accordingly, if any are supposed to be hidden. If not, shows emotes previously blacklisted in this session
 //25-02-2024: sticker support
@@ -67,7 +67,7 @@ function processEmotes(changes) {
         }
     }
 
-    blacklistedEmotes = global.BdApi.loadData("BlacklistEmojis", "disabledEmojis") ?? null; //refresh list
+    blacklistedEmotes = global.BdApi.Data.load("BlacklistEmojis", "disabledEmojis") ?? null; //refresh list
 
 }
 
@@ -102,9 +102,9 @@ function blacklistEmote(id, em) {
     let newId = id;
     if (!blacklistedEmotes.includes(newId)) {
         blacklistedEmotes.push(newId);
-        global.BdApi.saveData("BlacklistEmojis", "disabledEmojis", blacklistedEmotes);
+        BdApi.Data.save("BlacklistEmojis", "disabledEmojis", blacklistedEmotes);
         hideElement(em);
-        global.BdApi.showToast("Emote/Sticker hidden");
+        BdApi.UI.showToast("Emote/Sticker hidden");
     }
 }
 
@@ -117,9 +117,10 @@ function removeEmoteFromblacklist(id, em) {
             return value != newId;
         });
 
-        global.BdApi.saveData("BlacklistEmojis", "disabledEmojis", editedList);
+        //global.BdApi.saveData("BlacklistEmojis", "disabledEmojis", editedList);
+        BdApi.Data.save("BlacklistEmojis", "disabledEmojis", editedList);
         showElement(em);
-        global.BdApi.showToast("Emote/Sticker unhidden");
+        BdApi.UI.showToast("Emote/Sticker unhidden");
     }
 }
 
